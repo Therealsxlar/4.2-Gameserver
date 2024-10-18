@@ -10,6 +10,7 @@
 ## Features
 > List of features that this gameserver has:
 - [X] Ingame
+- [X] F7 = Start Aircraft
 - [X] Proper Hooking/Logging
 
 ## Future Updates
