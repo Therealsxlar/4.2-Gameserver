@@ -26,5 +26,16 @@ static void TickFlushHook(UNetDriver* NetDriver)
 	if (auto ReplicationDriver = NetDriver->ReplicationDriver)
 		reinterpret_cast<void(*)(UObject*)>(ReplicationDriver->Vft[0x53])(ReplicationDriver);
 
+	if (GetAsyncKeyState(VK_F7) & 1) // bus automatically starts this is for if you do not wanna wait
+	{
+		if (Client::GetGameState()->GamePhase >= EAthenaGamePhase::Aircraft)
+		{
+			LOG("aircraft was already started");
+			return;
+		}
+
+		Client::GetKismetLibrary()->ExecuteConsoleCommand(Client::GetWorld(), L"startaircraft", nullptr);
+	}
+
 	return TickFlush(NetDriver);
 }
