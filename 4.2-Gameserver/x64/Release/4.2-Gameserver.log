@@ -1,0 +1,17 @@
+﻿  dllmain.cpp
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\SDK\SDK\Basic.hpp(183,31): warning C4267: '=': conversion from 'size_t' to 'int32', possible loss of data
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\SDK\SDK\HeadMountedDisplay_structs.hpp(23,2): warning C4309: 'initializing': truncation of constant value
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\SDK\SDK\HeadMountedDisplay_structs.hpp(23,2): warning C4369: 'SDK::EXRTrackedDeviceType::EXRTrackedDeviceType_MAX':  enumerator value '256' cannot be represented as 'unsigned char', value is '256'
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\Framework.h(100,9): warning C4101: 'dwTemp': unreferenced local variable
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\Framework.h(134,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\Framework.h(135,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\Framework.h(136,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\O1ogr\source\repos\4.2-Gameserver\4.2-Gameserver\Framework.h(137,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\xutility(4672,18): warning C4244: '=': conversion from 'wchar_t' to 'char', possible loss of data
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Generating code
+  2 of 373 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  4.2-Gameserver.vcxproj -> C:\Users\O1ogr\source\repos\4.2-Gameserver\x64\Release\4.2-Gameserver.dll

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Server">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fortnite">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{a6188f54-7fc9-48e0-b552-dd14c5ae28ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\SDK">
+      <UniqueIdentifier>{ab6c836f-835a-4da0-87c1-917a257da77f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fortnite\Game">
+      <UniqueIdentifier>{7f3441e7-07e4-484d-8d0e-7262ea666c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Public">
+      <UniqueIdentifier>{50efee40-d2ef-48c2-89d5-5b083dd1c606}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooking.h">
+      <Filter>Fortnite</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\PropertyFixup.hpp">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\SDK.hpp">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="NetDriver.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Gamemode.h">
+      <Filter>Fortnite\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Abilities.h">
+      <Filter>Fortnite\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Fortnite\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Fortnite\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <Filter>Server\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.h">
+      <Filter>Server\Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Fortnite</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\SDK\Basic.cpp">
+      <Filter>SDK\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\SDK\CoreUObject_functions.cpp">
+      <Filter>SDK\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\SDK\Engine_functions.cpp">
+      <Filter>SDK\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\SDK\FortniteGame_functions.cpp">
+      <Filter>SDK\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\SDK\GameplayAbilities_functions.cpp">
+      <Filter>SDK\SDK</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
