@@ -1,7 +1,7 @@
 # 4.2 Gameserver
 
 ## Note
-> This gameserver is unfinshed and is planned to be worked on. (message me on discord if i should keep working on this) **star is aswell**
+> This gameserver is unfinshed and is planned to be worked on. (message me on discord if i should keep working on this) **star it aswell**
 - feel free to change things or just add stuff this is experimental
 - discord: 'sxlarr'
 
