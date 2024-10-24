@@ -10,11 +10,12 @@
 ## Features
 > List of features that this gameserver has:
 - [X] Ingame
+- [X] Abilities
+- [X] MCP
 - [X] F7 = Start Aircraft
 - [X] Proper Hooking/Logging
 
 ## Future Updates
-- [ ] Abilities
 - [ ] Inventory (It's supported but it's not finshed.)
 
 ## Credits
