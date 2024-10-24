@@ -1,7 +1,7 @@
 #pragma once
 
 static void* (*ApplyCharacterCustomization)(void*, void*) = decltype(ApplyCharacterCustomization)(Client::BaseAddress() + 0xf5bb20);
-void ServerAcknowlegePossessionHook(AFortPlayerControllerAthena* Controller, APawn* Pawn)
+void ServerAcknowlegePossession(AFortPlayerControllerAthena* Controller, APawn* Pawn)
 {
     Controller->AcknowledgedPawn = Pawn;
 
@@ -10,30 +10,23 @@ void ServerAcknowlegePossessionHook(AFortPlayerControllerAthena* Controller, APa
 
 void ServerExecuteInventoryItem(AFortPlayerControllerAthena* Controller, FGuid ItemGuid)
 {
-    if (!Controller || Controller->IsInAircraft()) // not in the aircraft
-        return;
+    if (!Controller || Controller->IsInAircraft()) return;
 
-    auto Instance = FindItemInstanceByGUID(Controller, ItemGuid); // get the item instance
-    if (!Instance || !Instance->ItemEntry.ItemDefinition)
-        return;
+    auto* Instance = FindItemInstanceByGUID(Controller, ItemGuid);
+    if (!Instance || !Instance->ItemEntry.ItemDefinition) return;
 
-    auto Pawn = Cast<AFortPlayerPawn>(Controller->Pawn); // get the pawn
-    if (!Pawn)
-        return;
-
-    if (auto WeaponDefinition = Cast<UFortWeaponItemDefinition>(Instance->ItemEntry.ItemDefinition)) // attempt to equip if its a weapon (so real!)
-    {
-        Pawn->EquipWeaponDefinition(WeaponDefinition, ItemGuid);
-    }
+    if (auto Pawn = Cast<AFortPlayerPawn>(Controller->Pawn))
+        if (auto WeaponDefinition = Cast<UFortWeaponItemDefinition>(Instance->ItemEntry.ItemDefinition))
+            Pawn->EquipWeaponDefinition(WeaponDefinition, ItemGuid);
 }
 
 namespace Player
 {
-    void HookPlayer()
+    void InitializePlayer()
     {
         auto FortPlayerControllerAthena = StaticFindObject<AFortPlayerControllerAthena>("/Script/FortniteGame.Default__FortPlayerControllerAthena");
 
-        VirtualHook(FortPlayerControllerAthena->Vft, 260, ServerAcknowlegePossessionHook);
+        VirtualHook(FortPlayerControllerAthena->Vft, 260, ServerAcknowlegePossession);
         VirtualHook(FortPlayerControllerAthena->Vft, 487, ServerExecuteInventoryItem);
     }
 }

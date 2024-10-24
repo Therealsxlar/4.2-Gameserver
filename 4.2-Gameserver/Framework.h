@@ -1,15 +1,17 @@
 #pragma once
 #include <Windows.h>
 #include <iostream>
-#include <cstdio>
-#include <format>
-#include <intrin.h>
 #include <string>
-#include <map>
 #include <vector>
-#include <fstream>
-
-#include "Includes.h"
+#include <cstdio>
+#include <array>
+#include <bitset>
+#include <thread>
+#include <set>
+#include <intrin.h>
+#include <numeric>
+#include <algorithm>
+#include <map>
 
 #include "minhook/MinHook.h"
 #pragma comment(lib, "minhook/minhook.lib")
@@ -17,6 +19,7 @@
 #include "SDK/SDK.hpp"
 using namespace SDK;
 
+#include "Includes.h"
 #include "Configuration.h"
 
 static void LOG(std::string Message)
@@ -88,6 +91,17 @@ namespace Client
 	}
 }
 
+namespace Player
+{
+	static __int64 (*DispatchRequestOG)(__int64, __int64*, int);
+	static __int64 DispatchRequest(__int64 a1, __int64* a2, int a3)
+	{
+		*(int*)(__int64(a2) + 0x28) = 3;
+
+		return DispatchRequestOG(a1, a2, 3);
+	}
+}
+
 namespace Memory
 {
 	void NullFunction(uintptr_t Func)
@@ -149,5 +163,5 @@ T* SpawnActor(FVector Location, FRotator Rotation = FRotator{ 0, 0, 0 }, UClass*
 template<typename T>
 T* Actors(UClass* Class = T::StaticClass(), FVector Loc = {}, FRotator Rot = {}, AActor* Owner = nullptr)
 {
-	return SpawnActor<T>(Loc, Rot, Class); // yeah this works fine.
+	return SpawnActor<T>(Loc, Rot, Class); // yeah this works fine (helps with alot of stuff ig)
 }

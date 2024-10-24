@@ -1,23 +1,31 @@
 #pragma once
 
-static bool ReadyToStart = false;
+static bool bInitialize = false;
+static bool bSetupPlaylist = false;
 
-bool (*ReadyToStartMatch)(AFortGameModeAthena*);
-bool ReadyToStartMatchHook(AFortGameModeAthena* GameMode)
+bool (*ReadyToStartMatchOG)(AFortGameModeAthena*);
+bool ReadyToStartMatch(AFortGameModeAthena* GameMode)
 {
+    if (!bSetupPlaylist) {
+        bSetupPlaylist = true;
+
+        UFortPlaylistAthena* Playlist = StaticFindObject<UFortPlaylistAthena>(Playlists::SoloPlaylist);
+        Client::GetGameState()->CurrentPlaylistData = Playlist;
+        Client::GetGameState()->OnRep_CurrentPlaylistData();
+
+        LOG("Set Playlist!");
+        Sleep(1000);
+    }
+
     TArray<AActor*> WarmupActors;
     Client::GetStatics()->GetAllActorsOfClass(Client::GetWorld(), AFortPlayerStartWarmup::StaticClass(), &WarmupActors);
 
     if (WarmupActors.Num() == 0)
         return false;
 
-    if (!ReadyToStart)
+    if (!bInitialize)
     {
-        ReadyToStart = true;
-
-        UFortPlaylistAthena* Playlist = StaticFindObject<UFortPlaylistAthena>("/Game/Athena/Playlists/Playlist_DefaultSolo.Playlist_DefaultSolo");
-        Client::GetGameState()->CurrentPlaylistData = Playlist;
-        Client::GetGameState()->OnRep_CurrentPlaylistData();
+        bInitialize = true;
 
         InitHost = decltype(InitHost)(Client::BaseAddress() + 0x34ade0);
         PauseBeaconRequests = decltype(PauseBeaconRequests)(Client::BaseAddress() + 0xdc5a90);
@@ -50,6 +58,8 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* GameMode)
                 Client::GetWorld()->LevelCollections[i].NetDriver = NetDriver;
             }
 
+            SetConsoleTitleA("4.2 Gameserver | Listening on Port 7777");
+
             std::cout << "Listening on Port 7777!\n";
         }
 
@@ -59,11 +69,11 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* GameMode)
         Client::GetGameMode()->bWorldIsReady = true;
     }
 
-    return ReadyToStartMatch(GameMode);
+    return ReadyToStartMatchOG(GameMode);
 }
 
-static void (*HandleStartingNewPlayer)(AFortGameModeAthena*, AFortPlayerControllerAthena*);
-void HandleStartingNewPlayerHook(AFortGameModeAthena* Gamemode, AFortPlayerControllerAthena* NewPlayer)
+static void (*HandleStartingNewPlayerOG)(AFortGameModeAthena*, AFortPlayerControllerAthena*);
+void HandleStartingNewPlayer(AFortGameModeAthena* GameMode, AFortPlayerControllerAthena* NewPlayer)
 {
     auto PlayerState = (AFortPlayerStateAthena*)NewPlayer->PlayerState;
 
@@ -75,15 +85,18 @@ void HandleStartingNewPlayerHook(AFortGameModeAthena* Gamemode, AFortPlayerContr
 
     NewPlayer->OverriddenBackpackSize = 5;
 
-    return HandleStartingNewPlayer(Gamemode, NewPlayer);
+    return HandleStartingNewPlayerOG(GameMode, NewPlayer);
 }
 
-APawn* SpawnDefaultPawnForHook(AGameModeBase* GameMode, AController* NewPlayer, AActor* StartSpot)
+APawn* SpawnDefaultPawnFor(AGameModeBase* GameMode, AController* NewPlayer, AActor* StartSpot)
 {
     auto PawnClass = StaticFindObject<UClass>("/Game/Athena/PlayerPawn_Athena.PlayerPawn_Athena_C");
     auto NewPawn = SpawnActor<APawn>(StartSpot->K2_GetActorLocation(), StartSpot->K2_GetActorRotation(), PawnClass);
-
     auto FortPlayerController = Cast<AFortPlayerControllerAthena>(NewPlayer);
+
+    auto PlayerState = (AFortPlayerState*)NewPlayer->PlayerState;
+    std::string GetPlayerName = PlayerState->GetPlayerName().ToString();
+
     for (int i = 0; i < Client::GetGameMode()->StartingItems.Num(); i++)
     {
         auto& Item = Client::GetGameMode()->StartingItems[i].Item;
@@ -94,21 +107,45 @@ APawn* SpawnDefaultPawnForHook(AGameModeBase* GameMode, AController* NewPlayer, 
     auto& CosmeticLoadoutPickaxe = FortPlayerController->CustomizationLoadout;
     GiveItem(FortPlayerController, CosmeticLoadoutPickaxe.Pickaxe ? CosmeticLoadoutPickaxe.Pickaxe->WeaponDefinition : Pickaxe->WeaponDefinition, 1);
 
-    LOG("Got the Pickaxe: " + CosmeticLoadoutPickaxe.Pickaxe->GetName()); // fr fr
+    // not needed just a test
+    LOG("Character: " + FortPlayerController->CustomizationLoadout.Character->GetName());
+    LOG("Backpack: " + FortPlayerController->CustomizationLoadout.Backpack->GetName());
+    LOG("Got the Pickaxe for: " + GetPlayerName + " " + CosmeticLoadoutPickaxe.Pickaxe->GetName());
+    LOG("Glider: " + FortPlayerController->CustomizationLoadout.Glider->GetName());
+    LOG("Contrail: " + FortPlayerController->CustomizationLoadout.SkyDiveContrail->GetName());
 
     Update((AFortPlayerControllerAthena*)NewPlayer);
 
     return NewPawn;
 }
 
-namespace Gamemode
+void (*ServerReadyToStartMatchOG)(AFortPlayerController* PlayerController);
+void ServerReadyToStartMatch(AFortPlayerControllerAthena* PlayerController)
 {
-    void HookGamemode()
+    if (PlayerController)
+    {
+        auto PlayerState = (AFortPlayerState*)PlayerController->PlayerState;
+        if (PlayerState)
+        {
+            GrantAbilities(PlayerState->AbilitySystemComponent);
+            LOG("Abilities Granted!");
+        }
+    }
+
+    return ServerReadyToStartMatchOG(PlayerController);
+}
+
+namespace GameMode
+{
+    void InitializeGamemode()
     {
         static auto FortGameModeAthena = StaticFindObject<AFortGameModeAthena>("/Script/FortniteGame.Default__FortGameModeAthena");
+        auto FortPlayerControllerAthena = StaticFindObject<AFortPlayerControllerAthena>("/Script/FortniteGame.Default__FortPlayerControllerAthena");
 
-        VirtualHook(FortGameModeAthena->Vft, 253, ReadyToStartMatchHook, (PVOID*)&ReadyToStartMatch);
-        VirtualHook(FortGameModeAthena->Vft, 199, HandleStartingNewPlayerHook, (PVOID*)&HandleStartingNewPlayer);
-        VirtualHook(FortGameModeAthena->Vft, 193, SpawnDefaultPawnForHook);
+        VirtualHook(FortGameModeAthena->Vft, 253, ReadyToStartMatch, (PVOID*)&ReadyToStartMatchOG);
+        VirtualHook(FortGameModeAthena->Vft, 199, HandleStartingNewPlayer, (PVOID*)&HandleStartingNewPlayerOG);
+        VirtualHook(FortGameModeAthena->Vft, 193, SpawnDefaultPawnFor);
+        VirtualHook(FortPlayerControllerAthena->Vft, 579, ServerReadyToStartMatch, (PVOID*)&ServerReadyToStartMatchOG);
+
     }
 }

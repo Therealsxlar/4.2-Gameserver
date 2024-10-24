@@ -18,7 +18,7 @@ DWORD WINAPI Main(LPVOID)
     FILE* fptr;
     freopen_s(&fptr, "CONOUT$", "w+", stdout);
 
-    SetConsoleTitleA("4.2 Gameserver (Base: Sxlar) | (SDK: Sxlar)");
+    SetConsoleTitleA("4.2 Gameserver (Base: Sxlar) | (SDK: Sxlar - Credits: Dumper 7)");
 
     MH_Initialize();
     InitGObjects();
@@ -26,9 +26,9 @@ DWORD WINAPI Main(LPVOID)
     StaticFindObject_ = decltype(StaticFindObject_)(__int64(Client::BaseAddress() + 0x1527580));
     StaticLoadObject_ = decltype(StaticLoadObject_)(__int64(Client::BaseAddress() + 0x1529060));
 
-    Hooking::Gameserver();
+    Hooking::InitializeGameserver();
     Sleep(5000);
-    Hooking::LoadGame();
+    Hooking::InitializeTerrain();
 
     return 0;
 }
