@@ -146,6 +146,5 @@ namespace GameMode
         VirtualHook(FortGameModeAthena->Vft, 199, HandleStartingNewPlayer, (PVOID*)&HandleStartingNewPlayerOG);
         VirtualHook(FortGameModeAthena->Vft, 193, SpawnDefaultPawnFor);
         VirtualHook(FortPlayerControllerAthena->Vft, 579, ServerReadyToStartMatch, (PVOID*)&ServerReadyToStartMatchOG);
-
     }
 }

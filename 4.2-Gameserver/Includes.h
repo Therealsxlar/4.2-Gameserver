@@ -23,6 +23,9 @@ using namespace SDK;
 
 namespace Playlists
 {
-	// omg omg so real! (i'll add other playlists soon im to lazy rn)
+	// omg omg so real!
 	constexpr const char* SoloPlaylist = "/Game/Athena/Playlists/Playlist_DefaultSolo.Playlist_DefaultSolo";
+	constexpr const char* DuoPlaylist = "/Game/Athena/Playlists/Playlist_DefaultDuo.Playlist_DefaultDuo";
+	constexpr const char* SquadPlaylist = "/Game/Athena/Playlists/Playlist_DefaultSquad.Playlist_DefaultSquad";
+	constexpr const char* Playlist50v50 = "/Game/Athena/Playlists/50v50/Playlist_50v50.Playlist_50v50";
 }

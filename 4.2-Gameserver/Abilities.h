@@ -31,7 +31,7 @@ void InternalServerTryActivateAbilityHook(UAbilitySystemComponent* AbilitySystem
 
     if (bActivated)
     {
-        LOG("abilities activated.");
+        // LOG("abilities activated.");
     }
     else
     {
@@ -54,16 +54,15 @@ static void GrantAbility(UAbilitySystemComponent* ASC, UGameplayAbility* Ability
 
 static void GrantAbilities(UAbilitySystemComponent* ASC)
 {
-    static auto AbilitySet = StaticFindObject<UFortAbilitySet>("/Game/Abilities/Player/Generic/Traits/DefaultPlayer/GAS_DefaultPlayer.GAS_DefaultPlayer");
-
-    for (int i = 0; i < AbilitySet->GameplayAbilities.Num(); ++i)
+    if (const auto AbilitySet = StaticFindObject<UFortAbilitySet>("/Game/Abilities/Player/Generic/Traits/DefaultPlayer/GAS_DefaultPlayer.GAS_DefaultPlayer"))
     {
-        UGameplayAbility* AbilityToUse = (UGameplayAbility*)AbilitySet->GameplayAbilities[i].Get()->DefaultObject;
-        GrantAbility(ASC, AbilityToUse);
+        for (int i = 0; i < AbilitySet->GameplayAbilities.Num(); ++i)
+        {
+            GrantAbility(ASC, Cast<UGameplayAbility>(AbilitySet->GameplayAbilities[i]->DefaultObject));
+        }
     }
 
-    UGameplayAbility* CommitExecute = (UGameplayAbility*)StaticFindObject<UClass>("/Game/Abilities/Weapons/Ranged/GA_Ranged_GenericDamage.GA_Ranged_GenericDamage_C")->DefaultObject;
-    GrantAbility(ASC, CommitExecute);
+    GrantAbility(ASC, Cast<UGameplayAbility>(StaticFindObject<UClass>("/Game/Abilities/Weapons/Ranged/GA_Ranged_GenericDamage.GA_Ranged_GenericDamage_C")->DefaultObject));
 }
 
 UGameplayAbility* EmoteAbility(UFortMontageItemDefinitionBase* EmoteAsset)

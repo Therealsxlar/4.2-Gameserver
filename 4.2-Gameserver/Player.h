@@ -1,7 +1,7 @@
 #pragma once
 
 static void* (*ApplyCharacterCustomization)(void*, void*) = decltype(ApplyCharacterCustomization)(Client::BaseAddress() + 0xf5bb20);
-void ServerAcknowlegePossession(AFortPlayerControllerAthena* Controller, APawn* Pawn)
+void ServerAcknowledgePossession(AFortPlayerControllerAthena* Controller, APawn* Pawn)
 {
     Controller->AcknowledgedPawn = Pawn;
 
@@ -26,7 +26,7 @@ namespace Player
     {
         auto FortPlayerControllerAthena = StaticFindObject<AFortPlayerControllerAthena>("/Script/FortniteGame.Default__FortPlayerControllerAthena");
 
-        VirtualHook(FortPlayerControllerAthena->Vft, 260, ServerAcknowlegePossession);
+        VirtualHook(FortPlayerControllerAthena->Vft, 260, ServerAcknowledgePossession);
         VirtualHook(FortPlayerControllerAthena->Vft, 487, ServerExecuteInventoryItem);
     }
 }
