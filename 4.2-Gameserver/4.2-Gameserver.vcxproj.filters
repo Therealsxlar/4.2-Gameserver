@@ -50,10 +50,10 @@
     <ClInclude Include="Inventory.h">
       <Filter>Fortnite\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Configuration.h">
+    <ClInclude Include="Utils.h">
       <Filter>Server\Public</Filter>
     </ClInclude>
-    <ClInclude Include="Includes.h">
+    <ClInclude Include="Properties.h">
       <Filter>Server\Public</Filter>
     </ClInclude>
   </ItemGroup>

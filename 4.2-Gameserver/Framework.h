@@ -19,8 +19,8 @@
 #include "SDK/SDK.hpp"
 using namespace SDK;
 
-#include "Includes.h"
-#include "Configuration.h"
+#include "Properties.h"
+#include "Utils.h"
 
 static void LOG(std::string Message)
 {

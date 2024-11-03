@@ -9,7 +9,7 @@ bool ReadyToStartMatch(AFortGameModeAthena* GameMode)
     if (!bSetupPlaylist) {
         bSetupPlaylist = true;
 
-        UFortPlaylistAthena* Playlist = StaticFindObject<UFortPlaylistAthena>(Playlists::SoloPlaylist);
+        UFortPlaylistAthena* Playlist = StaticFindObject<UFortPlaylistAthena>(Playlists::Playlist50v50);
         Client::GetGameState()->CurrentPlaylistData = Playlist;
         Client::GetGameState()->OnRep_CurrentPlaylistData();
 
@@ -58,9 +58,7 @@ bool ReadyToStartMatch(AFortGameModeAthena* GameMode)
                 Client::GetWorld()->LevelCollections[i].NetDriver = NetDriver;
             }
 
-            SetConsoleTitleA("4.2 Gameserver | Listening on Port 7777");
-
-            std::cout << "Listening on Port 7777!\n";
+            SetConsoleTitleA("4.2 Gameserver | Listening");
         }
 
         Client::GetGameMode()->WarmupRequiredPlayerCount = 1;
@@ -107,12 +105,7 @@ APawn* SpawnDefaultPawnFor(AGameModeBase* GameMode, AController* NewPlayer, AAct
     auto& CosmeticLoadoutPickaxe = FortPlayerController->CustomizationLoadout;
     GiveItem(FortPlayerController, CosmeticLoadoutPickaxe.Pickaxe ? CosmeticLoadoutPickaxe.Pickaxe->WeaponDefinition : Pickaxe->WeaponDefinition, 1);
 
-    // not needed just a test
-    LOG("Character: " + FortPlayerController->CustomizationLoadout.Character->GetName());
-    LOG("Backpack: " + FortPlayerController->CustomizationLoadout.Backpack->GetName());
     LOG("Got the Pickaxe for: " + GetPlayerName + " " + CosmeticLoadoutPickaxe.Pickaxe->GetName());
-    LOG("Glider: " + FortPlayerController->CustomizationLoadout.Glider->GetName());
-    LOG("Contrail: " + FortPlayerController->CustomizationLoadout.SkyDiveContrail->GetName());
 
     Update((AFortPlayerControllerAthena*)NewPlayer);
 

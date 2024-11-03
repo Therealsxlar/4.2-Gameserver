@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "NetDriver.h"
-#include "Includes.h"
-#include "Configuration.h"
+#include "Properties.h"
+#include "Utils.h"
 
 #include "Abilities.h"
 #include "Inventory.h"
