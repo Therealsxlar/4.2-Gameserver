@@ -18,25 +18,22 @@
     <Filter Include="Fortnite\Game">
       <UniqueIdentifier>{7f3441e7-07e4-484d-8d0e-7262ea666c43}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Server\Public">
+    <Filter Include="Server\General">
       <UniqueIdentifier>{50efee40-d2ef-48c2-89d5-5b083dd1c606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\NetDriver">
+      <UniqueIdentifier>{8c390af1-83c4-4cae-af99-e0af6b334933}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h">
       <Filter>Server</Filter>
     </ClInclude>
-    <ClInclude Include="Hooking.h">
-      <Filter>Fortnite</Filter>
-    </ClInclude>
     <ClInclude Include="SDK\PropertyFixup.hpp">
       <Filter>SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\SDK.hpp">
       <Filter>SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="NetDriver.h">
-      <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="Gamemode.h">
       <Filter>Fortnite\Game</Filter>
@@ -51,10 +48,16 @@
       <Filter>Fortnite\Game</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Server\Public</Filter>
+      <Filter>Server\General</Filter>
     </ClInclude>
     <ClInclude Include="Properties.h">
-      <Filter>Server\Public</Filter>
+      <Filter>Server\General</Filter>
+    </ClInclude>
+    <ClInclude Include="NetDriver.h">
+      <Filter>Server\NetDriver</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions.h">
+      <Filter>Server\General</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -22,9 +22,12 @@ using namespace SDK;
 #include "Properties.h"
 #include "Utils.h"
 
-static void LOG(std::string Message)
+template<typename ...Args>
+static void LOG(Args && ...args)
 {
-	std::cout << "Log: " << Message << "\n";
+	std::cout << "Log: ";
+	(std::cout << ... << args);
+	std::cout << std::endl;
 }
 
 namespace Client
@@ -91,7 +94,7 @@ namespace Client
 	}
 }
 
-namespace Player
+namespace DispatchRequest
 {
 	static __int64 (*DispatchRequestOG)(__int64, __int64*, int);
 	static __int64 DispatchRequest(__int64 a1, __int64* a2, int a3)
@@ -117,7 +120,7 @@ namespace Memory
 }
 
 template <typename T>
-__forceinline T* Cast(UObject* Object)
+static __forceinline T* Cast(UObject* Object)
 {
 	if (Object && Object->IsA(T::StaticClass()))
 	{
@@ -163,5 +166,5 @@ T* SpawnActor(FVector Location, FRotator Rotation = FRotator{ 0, 0, 0 }, UClass*
 template<typename T>
 T* Actors(UClass* Class = T::StaticClass(), FVector Loc = {}, FRotator Rot = {}, AActor* Owner = nullptr)
 {
-	return SpawnActor<T>(Loc, Rot, Class); // yeah this works fine (helps with alot of stuff ig)
+	return SpawnActor<T>(Loc, Rot, Class);
 }

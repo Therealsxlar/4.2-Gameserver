@@ -1,5 +1,6 @@
 #include "Framework.h"
 #include "NetDriver.h"
+#include "Definitions.h"
 #include "Properties.h"
 #include "Utils.h"
 
@@ -8,17 +9,41 @@
 #include "Gamemode.h"
 #include "Player.h"
 
-#include "Hooking.h"
+void InitGS()
+{
+    CREATEHOOK(Client::BaseAddress() + 0x249ea20, GetNetModeWorld, nullptr);
+    CREATEHOOK(Client::BaseAddress() + 0x20cee10, Definitions::KickPlayer, &Definitions::KickPlayerOG);
+    CREATEHOOK(Client::BaseAddress() + 0x806900, DispatchRequest::DispatchRequest, &DispatchRequest::DispatchRequestOG);
+    CREATEHOOK(Client::BaseAddress() + 0x2449f70, GetMaxTickrate, nullptr);
+    CREATEHOOK(Client::BaseAddress() + 0x21f8a90, TickFlush, &TickFlushOG);
 
-using namespace std;
+    Memory::NullFunction(Client::BaseAddress() + 0xc4bd00); // ChangeGameSessionId
+    Memory::NullFunction(Client::BaseAddress() + 0xa8de20);
+    Memory::NullFunction(Client::BaseAddress() + 0xf465b0);
 
-DWORD WINAPI Main(LPVOID)
+    Abilities::InitializeHooks();
+    Gamemode::InitializeHooks();
+    Player::InitializeHooks();
+    Inventory::InitializeHooks();
+
+    MH_EnableHook(MH_ALL_HOOKS);
+}
+
+void InitializeTerrain()
+{
+    // Loads the game (Must hook InitGS first always.)
+    *(bool*)(Client::BaseAddress() + 0x4bf846c) = false; // GIsClient
+    ((UKismetSystemLibrary*)UKismetSystemLibrary::StaticClass()->DefaultObject)->ExecuteConsoleCommand(Client::GetWorld(), L"open Athena_Terrain", nullptr);
+    Client::GetEngine()->GameInstance->LocalPlayers.Remove(0);
+}
+
+void Main()
 {
     AllocConsole();
-    FILE* fptr;
-    freopen_s(&fptr, "CONOUT$", "w+", stdout);
+    FILE* file;
+    freopen_s(&file, "CONOUT$", "w", stdout);
 
-    SetConsoleTitleA("4.2 Gameserver (Base: Sxlar) | (SDK: Sxlar - Credits: Dumper 7)");
+    SetConsoleTitleA("4.2 Gameserver (Base: Sxlar) | (SDK: Sxlar - Credits: Dumper 7) | Started Hooking");
 
     MH_Initialize();
     InitGObjects();
@@ -26,11 +51,9 @@ DWORD WINAPI Main(LPVOID)
     StaticFindObject_ = decltype(StaticFindObject_)(__int64(Client::BaseAddress() + 0x1527580));
     StaticLoadObject_ = decltype(StaticLoadObject_)(__int64(Client::BaseAddress() + 0x1529060));
 
-    Hooking::InitializeGameserver();
+    InitGS();
     Sleep(5000);
-    Hooking::InitializeTerrain();
-
-    return 0;
+    InitializeTerrain();
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
@@ -41,7 +64,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        CreateThread(0, 0, Main, 0, 0, 0);
+        std::thread(Main).detach();
     }
     return TRUE;
 }

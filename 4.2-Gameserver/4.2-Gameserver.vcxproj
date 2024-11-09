@@ -141,10 +141,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Abilities.h" />
+    <ClInclude Include="Definitions.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="Gamemode.h" />
-    <ClInclude Include="Hooking.h" />
     <ClInclude Include="Properties.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="NetDriver.h" />
