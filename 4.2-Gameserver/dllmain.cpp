@@ -51,7 +51,7 @@ void Main()
     StaticFindObject_ = decltype(StaticFindObject_)(__int64(Client::BaseAddress() + 0x1527580));
     StaticLoadObject_ = decltype(StaticLoadObject_)(__int64(Client::BaseAddress() + 0x1529060));
 
-    InitGS();
+    InitializeGS();
     Sleep(5000);
     InitializeTerrain();
 }
