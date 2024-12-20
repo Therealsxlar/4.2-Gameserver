@@ -24,6 +24,9 @@
     <Filter Include="Server\NetDriver">
       <UniqueIdentifier>{8c390af1-83c4-4cae-af99-e0af6b334933}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fortnite\Game\Filter">
+      <UniqueIdentifier>{c8362383-555b-40f3-9fa6-1dcb090b9876}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework.h">
@@ -57,7 +60,10 @@
       <Filter>Server\NetDriver</Filter>
     </ClInclude>
     <ClInclude Include="Definitions.h">
-      <Filter>Server\General</Filter>
+      <Filter>Fortnite\Game\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="Looting.h">
+      <Filter>Fortnite\Game\Filter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

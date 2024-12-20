@@ -9,7 +9,7 @@
 #include "Gamemode.h"
 #include "Player.h"
 
-void InitGS()
+void InitializeGS()
 {
     CREATEHOOK(Client::BaseAddress() + 0x249ea20, GetNetModeWorld, nullptr);
     CREATEHOOK(Client::BaseAddress() + 0x20cee10, Definitions::KickPlayer, &Definitions::KickPlayerOG);
@@ -31,7 +31,7 @@ void InitGS()
 
 void InitializeTerrain()
 {
-    // Loads the game (Must hook InitGS first always.)
+    // (InitializeTerrain) - Loads the game (Must hook InitGS first always.)
     *(bool*)(Client::BaseAddress() + 0x4bf846c) = false; // GIsClient
     ((UKismetSystemLibrary*)UKismetSystemLibrary::StaticClass()->DefaultObject)->ExecuteConsoleCommand(Client::GetWorld(), L"open Athena_Terrain", nullptr);
     Client::GetEngine()->GameInstance->LocalPlayers.Remove(0);
@@ -43,7 +43,7 @@ void Main()
     FILE* file;
     freopen_s(&file, "CONOUT$", "w", stdout);
 
-    SetConsoleTitleA("4.2 Gameserver (Base: Sxlar) | (SDK: Sxlar - Credits: Dumper 7) | Started Hooking");
+    SetConsoleTitleA("4.2 Gameserver (Base: Sxlar) | (SDK: Sxlar - Credits: Dumper 7) | Starting Server");
 
     MH_Initialize();
     InitGObjects();

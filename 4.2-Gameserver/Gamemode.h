@@ -104,11 +104,8 @@ class Gamemode
         }
 
         static auto Pickaxe = StaticFindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
-        auto& CosmeticLoadoutPickaxe = FortPlayerController->CustomizationLoadout;
+        auto CosmeticLoadoutPickaxe = FortPlayerController->CustomizationLoadout;
         Inventory::GiveItem(FortPlayerController, CosmeticLoadoutPickaxe.Pickaxe ? CosmeticLoadoutPickaxe.Pickaxe->WeaponDefinition : Pickaxe->WeaponDefinition, 1);
-
-        LOG("Got the Pickaxe for: " + GetPlayerName + " " + CosmeticLoadoutPickaxe.Pickaxe->GetName());
-
         Inventory::Update((AFortPlayerControllerAthena*)NewPlayer);
 
         return NewPawn;
@@ -133,12 +130,12 @@ class Gamemode
 public:
     static void InitializeHooks()
     {
-        static auto FortGameModeAthena = StaticFindObject<AFortGameModeAthena>("/Script/FortniteGame.Default__FortGameModeAthena");
-        auto FortPlayerControllerAthena = StaticFindObject<AFortPlayerControllerAthena>("/Script/FortniteGame.Default__FortPlayerControllerAthena");
+        static auto FortGMAthena = StaticFindObject<AFortGameModeAthena>("/Script/FortniteGame.Default__FortGameModeAthena");
+        auto FortPCAthena = StaticFindObject<AFortPlayerControllerAthena>("/Script/FortniteGame.Default__FortPlayerControllerAthena");
 
-        VirtualHook(FortGameModeAthena->Vft, 253, ReadyToStartMatch, (PVOID*)&ReadyToStartMatchOG);
-        VirtualHook(FortGameModeAthena->Vft, 199, HandleStartingNewPlayer, (PVOID*)&HandleStartingNewPlayerOG);
-        VirtualHook(FortGameModeAthena->Vft, 193, SpawnDefaultPawnFor);
-        VirtualHook(FortPlayerControllerAthena->Vft, 579, ServerReadyToStartMatch, (PVOID*)&ServerReadyToStartMatchOG);
+        VirtualHook(FortGMAthena->Vft, 253, ReadyToStartMatch, (PVOID*)&ReadyToStartMatchOG);
+        VirtualHook(FortGMAthena->Vft, 199, HandleStartingNewPlayer, (PVOID*)&HandleStartingNewPlayerOG);
+        VirtualHook(FortGMAthena->Vft, 193, SpawnDefaultPawnFor);
+        VirtualHook(FortPCAthena->Vft, 579, ServerReadyToStartMatch, (PVOID*)&ServerReadyToStartMatchOG);
     }
 };

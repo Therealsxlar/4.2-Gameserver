@@ -13,7 +13,7 @@ constexpr ENetMode NetMode = ENetMode::DedicatedServer;
 
 static ENetMode GetNetModeWorld() { return NetMode; }
 
-float GetMaxTickrate(void* a1, float a2, char a3) { return 30.f; }
+float GetMaxTickrate() { return 30.f; }
 
 static bool (*InitHost)(AOnlineBeacon* Beacon);
 static void (*PauseBeaconRequests)(AOnlineBeacon* Beacon, bool bPause);
