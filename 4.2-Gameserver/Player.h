@@ -26,7 +26,7 @@ class Player
 public:
     static void InitializeHooks()
     {
-        auto FortPCAthena = StaticFindObject<AFortPlayerControllerAthena>("/Script/FortniteGame.Default__FortPlayerControllerAthena");
+        auto FortPCAthena = AFortPlayerControllerAthena::StaticClass()->DefaultObject;
 
         VirtualHook(FortPCAthena->Vft, 260, ServerAcknowledgePossession);
         VirtualHook(FortPCAthena->Vft, 487, ServerExecuteInventoryItem);

@@ -2,6 +2,7 @@
 
 static bool bInitialize = false;
 static bool bSetupPlaylist = false;
+static bool bTestingMode = false;
 
 class Gamemode
 {
@@ -92,7 +93,7 @@ class Gamemode
     {
         auto PawnClass = StaticFindObject<UClass>("/Game/Athena/PlayerPawn_Athena.PlayerPawn_Athena_C");
         auto NewPawn = SpawnActor<APawn>(StartSpot->K2_GetActorLocation(), StartSpot->K2_GetActorRotation(), PawnClass);
-        auto FortPlayerController = Cast<AFortPlayerControllerAthena>(NewPlayer);
+        auto FortPC = Cast<AFortPlayerControllerAthena>(NewPlayer);
 
         auto PlayerState = (AFortPlayerState*)NewPlayer->PlayerState;
         std::string GetPlayerName = PlayerState->GetPlayerName().ToString();
@@ -100,12 +101,12 @@ class Gamemode
         for (int i = 0; i < Client::GetGameMode()->StartingItems.Num(); i++)
         {
             auto& Item = Client::GetGameMode()->StartingItems[i].Item;
-            if (Item) Inventory::GiveItem(FortPlayerController, Item, Client::GetGameMode()->StartingItems[i].Count);
+            if (Item) Inventory::GiveItem(FortPC, Item, Client::GetGameMode()->StartingItems[i].Count);
         }
 
         static auto Pickaxe = StaticFindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
-        auto CosmeticLoadoutPickaxe = FortPlayerController->CustomizationLoadout;
-        Inventory::GiveItem(FortPlayerController, CosmeticLoadoutPickaxe.Pickaxe ? CosmeticLoadoutPickaxe.Pickaxe->WeaponDefinition : Pickaxe->WeaponDefinition, 1);
+        auto CosmeticLoadoutPickaxe = FortPC->CustomizationLoadout;
+        Inventory::GiveItem(FortPC, CosmeticLoadoutPickaxe.Pickaxe ? CosmeticLoadoutPickaxe.Pickaxe->WeaponDefinition : Pickaxe->WeaponDefinition, 1);
         Inventory::Update((AFortPlayerControllerAthena*)NewPlayer);
 
         return NewPawn;
@@ -117,10 +118,19 @@ class Gamemode
         if (PlayerController)
         {
             auto PlayerState = (AFortPlayerState*)PlayerController->PlayerState;
+            auto FortPC = Cast<AFortPlayerControllerAthena>(PlayerController);
             if (PlayerState)
             {
                 Abilities::GrantAbilities(PlayerState->AbilitySystemComponent);
-                LOG("Abilities Granted!");
+                // LOG("Abilities Granted!");
+
+                if (bTestingMode) {
+                    static auto BluePump = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
+                    static auto ShotgunAmmo = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataShells.AthenaAmmoDataShells");
+
+                    Inventory::GiveItem(FortPC, BluePump, 1, 5);
+                    Inventory::GiveItem(FortPC, ShotgunAmmo, 1000);
+                }
             }
         }
 
@@ -130,8 +140,8 @@ class Gamemode
 public:
     static void InitializeHooks()
     {
-        static auto FortGMAthena = StaticFindObject<AFortGameModeAthena>("/Script/FortniteGame.Default__FortGameModeAthena");
-        auto FortPCAthena = StaticFindObject<AFortPlayerControllerAthena>("/Script/FortniteGame.Default__FortPlayerControllerAthena");
+        auto FortGMAthena = AFortGameModeAthena::StaticClass()->DefaultObject;
+        auto FortPCAthena = AFortPlayerControllerAthena::StaticClass()->DefaultObject;
 
         VirtualHook(FortGMAthena->Vft, 253, ReadyToStartMatch, (PVOID*)&ReadyToStartMatchOG);
         VirtualHook(FortGMAthena->Vft, 199, HandleStartingNewPlayer, (PVOID*)&HandleStartingNewPlayerOG);

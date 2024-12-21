@@ -6,6 +6,7 @@
 
 #include "Abilities.h"
 #include "Inventory.h"
+#include "Building.h"
 #include "Gamemode.h"
 #include "Player.h"
 
@@ -25,6 +26,7 @@ void InitializeGS()
     Gamemode::InitializeHooks();
     Player::InitializeHooks();
     Inventory::InitializeHooks();
+    Building::InitializeHooks();
 
     MH_EnableHook(MH_ALL_HOOKS);
 }

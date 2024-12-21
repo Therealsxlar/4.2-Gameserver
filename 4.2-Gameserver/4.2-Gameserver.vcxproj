@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Abilities.h" />
+    <ClInclude Include="Building.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Looting.h" />
     <ClInclude Include="Utils.h" />
