@@ -16,6 +16,7 @@
 - [X] MCP
 - [X] F7 or (FN + 7) = Start Aircraft
 - [X] Proper Hooking
+- [X] Farming/Building (I need to add editing now)
 
 ## Future Updates
 - [ ] Emoting
