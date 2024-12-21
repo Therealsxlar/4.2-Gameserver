@@ -7,9 +7,15 @@ public:
 	static void KickPlayer(AGameSession*, AController*) { return; }
 
 	static bool ReturnTrue() { return true; }
+	static bool ReturnFalse() { return false; }
 
 	static void CollectGarbage()
 	{
 		return;
 	}
 };
+
+namespace Helpers // idfk
+{
+	static inline void* (*ApplyCharacterCustomization)(void*, void*) = decltype(ApplyCharacterCustomization)(Client::BaseAddress() + 0xf5bb20);
+}

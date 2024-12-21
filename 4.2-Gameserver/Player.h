@@ -1,14 +1,12 @@
 #pragma once
 
-static void* (*ApplyCharacterCustomization)(void*, void*) = decltype(ApplyCharacterCustomization)(Client::BaseAddress() + 0xf5bb20);
-
 class Player
 {
     static void ServerAcknowledgePossession(AFortPlayerControllerAthena* Controller, APawn* Pawn)
     {
         Controller->AcknowledgedPawn = Pawn;
 
-        ApplyCharacterCustomization(Controller->PlayerState, Pawn);
+        Helpers::ApplyCharacterCustomization(Controller->PlayerState, Pawn);
     }
 
     static void ServerExecuteInventoryItem(AFortPlayerControllerAthena* Controller, FGuid ItemGuid)

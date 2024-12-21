@@ -1,5 +1,7 @@
 #pragma once
 
+// Mister E Person.
+
 enum class ENetMode
 {
     Standalone,
@@ -9,18 +11,18 @@ enum class ENetMode
     MAX,
 };
 
-constexpr ENetMode NetMode = ENetMode::DedicatedServer;
+ENetMode NetMode = ENetMode::DedicatedServer;
 
-static ENetMode GetNetModeWorld() { return NetMode; }
+ENetMode GetNetModeWorld() { return NetMode; }
 
 float GetMaxTickrate() { return 30.f; }
 
-static bool (*InitHost)(AOnlineBeacon* Beacon);
-static void (*PauseBeaconRequests)(AOnlineBeacon* Beacon, bool bPause);
-inline bool (*InitListen)(UNetDriver* Driver, void* InNotify, FURL& LocalURL, bool bReuseAddressAndPort, FString& Error);
-inline void* (*SetWorld)(UNetDriver* NetDriver, UWorld* World);
+static inline bool (*InitHost)(AOnlineBeacon* Beacon);
+static inline void* (*PauseBeaconRequests)(AOnlineBeacon* Beacon, bool bPause);
+static inline bool (*InitListen)(UNetDriver* Driver, void* InNotify, FURL& LocalURL, bool bReuseAddressAndPort, FString& Error);
+static inline void* (*SetWorld)(UNetDriver* NetDriver, UWorld* World);
 
-static void (*TickFlushOG)(UNetDriver*);
+static inline void (*TickFlushOG)(UNetDriver*);
 static void TickFlush(UNetDriver* NetDriver)
 {
     if (auto* ReplicationDriver = NetDriver->ReplicationDriver)
@@ -30,12 +32,12 @@ static void TickFlush(UNetDriver* NetDriver)
     {
         if (Client::GetGameState()->GamePhase >= EAthenaGamePhase::Aircraft)
         {
-            LOG("Aircraft was already started");
+            LOG("Aircraft was already started!!!");
             return;
         }
 
         Client::GetKismetLibrary()->ExecuteConsoleCommand(Client::GetWorld(), L"startaircraft", nullptr);
     }
 
-    TickFlushOG(NetDriver);
+    return TickFlushOG(NetDriver);
 }

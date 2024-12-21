@@ -1,5 +1,7 @@
 #pragma once
 
+// this was from twin1dev so credits to him.
+
 struct FFrame
 {
     char Padding[0x10];

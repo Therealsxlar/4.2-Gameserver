@@ -4,6 +4,7 @@
 #include "Properties.h"
 #include "Utils.h"
 
+#include "Looting.h"
 #include "Abilities.h"
 #include "Inventory.h"
 #include "Building.h"

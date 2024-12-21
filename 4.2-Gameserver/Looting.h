@@ -1,6 +1,6 @@
 #pragma once
 
-// soon.
+// looting coming soon!
 
 class Looting
 {

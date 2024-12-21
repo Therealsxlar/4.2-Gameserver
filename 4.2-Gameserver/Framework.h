@@ -32,7 +32,7 @@ static void LOG(Args && ...args)
 
 namespace Client
 {
-	static __forceinline uintptr_t BaseAddress()
+	static inline uintptr_t BaseAddress()
 	{
 		static uintptr_t BaseAddr = 0;
 
@@ -41,54 +41,54 @@ namespace Client
 		return BaseAddr;
 	}
 
-	static UFortEngine* GetEngine()
+	static inline UFortEngine* GetEngine()
 	{
 		static auto Engine = UObject::FindObject<UFortEngine>("FortEngine_");
 		return Engine;
 	}
 
-	static __forceinline UWorld* GetWorld()
+	static inline UWorld* GetWorld()
 	{
 		return GetEngine()->GameViewport->World;
 	}
 
-	inline AFortGameModeAthena* GetGameMode()
+	static inline AFortGameModeAthena* GetGameMode()
 	{
 		return reinterpret_cast<AFortGameModeAthena*>(GetWorld()->AuthorityGameMode);
 	}
 
-	inline AFortGameStateAthena* GetGameState()
+	static inline AFortGameStateAthena* GetGameState()
 	{
 		return reinterpret_cast<AFortGameStateAthena*>(GetWorld()->GameState);
 	}
 
 	template<typename T>
-	T* GetDefaultObject()
+	static inline T* GetDefaultObject()
 	{
 		return (T*)T::StaticClass()->DefaultObject;
 	}
 
-	UFortKismetLibrary* GetFortKismet()
+	static inline UFortKismetLibrary* GetFortKismet()
 	{
 		return GetDefaultObject<UFortKismetLibrary>();
 	}
 
-	UGameplayStatics* GetStatics()
+	static inline UGameplayStatics* GetStatics()
 	{
 		return GetDefaultObject<UGameplayStatics>();
 	}
 
-	UKismetStringLibrary* GetString()
+	static inline UKismetStringLibrary* GetString()
 	{
 		return GetDefaultObject<UKismetStringLibrary>();
 	}
 
-	UKismetSystemLibrary* GetKismetLibrary()
+	static inline UKismetSystemLibrary* GetKismetLibrary()
 	{
 		return GetDefaultObject<UKismetSystemLibrary>();
 	}
 
-	UKismetMathLibrary* GetMath()
+	static inline UKismetMathLibrary* GetMath()
 	{
 		return GetDefaultObject<UKismetMathLibrary>();
 	}
@@ -120,7 +120,7 @@ namespace Memory
 }
 
 template <typename T>
-static __forceinline T* Cast(UObject* Object)
+static inline T* Cast(UObject* Object)
 {
 	if (Object && Object->IsA(T::StaticClass()))
 	{
@@ -167,4 +167,57 @@ template<typename T>
 T* Actors(UClass* Class = T::StaticClass(), FVector Loc = {}, FRotator Rot = {}, AActor* Owner = nullptr)
 {
 	return SpawnActor<T>(Loc, Rot, Class);
+}
+
+namespace SpawnPickups
+{
+	AFortPickupAthena* SpawnPickup(FVector Loc, UFortItemDefinition* Def, int Count, int LoadedAmmo, EFortPickupSourceTypeFlag SourceType, EFortPickupSpawnSource Source = EFortPickupSpawnSource::Unset, AFortPlayerPawn* Pawn = nullptr, bool Toss = true, int OverrideCount = -1)
+	{
+		AFortPickupAthena* NewPickup = SpawnActor<AFortPickupAthena>(Loc);
+		NewPickup->bRandomRotation = true;
+		NewPickup->PrimaryPickupItemEntry.ItemDefinition = Def;
+		NewPickup->PrimaryPickupItemEntry.Count = OverrideCount != -1 ? OverrideCount : Count;
+		NewPickup->PrimaryPickupItemEntry.LoadedAmmo = LoadedAmmo;
+		NewPickup->OnRep_PrimaryPickupItemEntry();
+		NewPickup->PawnWhoDroppedPickup = Pawn;
+
+		if (Toss)
+		{
+			NewPickup->TossPickup(Loc, nullptr, -1, true);
+		}
+
+		if (Source == EFortPickupSpawnSource::Chest || Source == EFortPickupSpawnSource::AmmoBox)
+		{
+			NewPickup->bTossedFromContainer = true;
+			NewPickup->OnRep_TossedFromContainer();
+		}
+
+		return NewPickup;
+	}
+
+	AFortPickupAthena* SpawnPickup(FVector Loc, FFortItemEntry* Entry, EFortPickupSourceTypeFlag SourceType, EFortPickupSpawnSource Source = EFortPickupSpawnSource::Unset, AFortPlayerPawn* Pawn = nullptr, int OverrideCount = 0, bool Toss = true)
+	{
+		if (!Entry)
+			return nullptr;
+
+		AFortPickupAthena* NewPickup = SpawnActor<AFortPickupAthena>(Loc);
+		NewPickup->bRandomRotation = true;
+		NewPickup->PrimaryPickupItemEntry = *Entry;
+		NewPickup->PrimaryPickupItemEntry.Count = OverrideCount != 0 ? OverrideCount : Entry->Count;
+		NewPickup->OnRep_PrimaryPickupItemEntry();
+		NewPickup->PawnWhoDroppedPickup = Pawn;
+
+		if (Toss)
+		{
+			NewPickup->TossPickup(Loc, nullptr, -1, true);
+		}
+
+		if (Source == EFortPickupSpawnSource::Chest || Source == EFortPickupSpawnSource::AmmoBox)
+		{
+			NewPickup->bTossedFromContainer = true;
+			NewPickup->OnRep_TossedFromContainer();
+		}
+
+		return NewPickup;
+	}
 }

@@ -3018,15 +3018,27 @@ enum class EFortPickupTossState : uint8
 	EFortPickupTossState_MAX       = 3,
 };
 
+enum class EFortPickupSpawnSource : uint8
+{
+	Unset                          = 0,
+	PlayerElimination              = 1,
+	Chest                          = 2,
+	SupplyDrop                     = 3,
+	AmmoBox                        = 4,
+	Drone                          = 5,
+	EFortPickupSpawnSource_MAX     = 6,
+};
+
 enum class EFortPickupSourceTypeFlag : uint8
 {
-	None                           = 0,
+	Other                          = 0,
 	Player                         = 1,
 	Destruction                    = 2,
 	Container                      = 4,
 	AI                             = 8,
-	Other                          = 15,
-	EFortPickupSourceTypeFlag_MAX  = 16,
+	Tossed                         = 16,
+	FloorLoot                      = 32,
+	EFortPickupSourceTypeFlag_MAX  = 33,
 };
 
 enum class EFortPlayerAnimBodyType : uint8

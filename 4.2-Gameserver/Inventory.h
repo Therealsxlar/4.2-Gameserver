@@ -59,7 +59,7 @@ public:
     {
         if (!Player || !Player->WorldInventory || !ItemDefinition || Count <= 0) return;
 
-        auto Inventory = Player->WorldInventory->Inventory;
+        auto& Inventory = Player->WorldInventory->Inventory;
 
         FFortItemEntry* ExistingEntry = FindItemEntry(Player, ItemDefinition);
 
