@@ -3,26 +3,26 @@
 class Inventory
 {
 public:
-    static void Update(AFortPlayerControllerAthena* Player, FFortItemEntry* Entry = nullptr)
+    static void Update(AFortPlayerControllerAthena* PC, FFortItemEntry* Entry = nullptr)
     {
-        if (!Player || !Player->WorldInventory) return;
-        Player->WorldInventory->HandleInventoryLocalUpdate();
+        if (!PC || !PC->WorldInventory) return;
+        PC->WorldInventory->HandleInventoryLocalUpdate();
 
-        return Entry ? Player->WorldInventory->Inventory.MarkItemDirty(*Entry) : Player->WorldInventory->Inventory.MarkArrayDirty();
+        return Entry ? PC->WorldInventory->Inventory.MarkItemDirty(*Entry) : PC->WorldInventory->Inventory.MarkArrayDirty();
     }
 
-    static FFortItemEntry* FindItemEntry(AFortPlayerControllerAthena* Player, const FGuid& ItemGuid)
+    static FFortItemEntry* FindItemEntry(AFortPlayerControllerAthena* PC, const FGuid& ItemGuid)
     {
-        if (!Player || !Player->WorldInventory) return nullptr;
+        if (!PC || !PC->WorldInventory) return nullptr;
 
-        auto SoReal = Player->WorldInventory->Inventory.ReplicatedEntries;
+        auto SoReal = PC->WorldInventory->Inventory.ReplicatedEntries;
         for (int i = 0; i < SoReal.Num(); ++i)
             if (SoReal[i].ItemGuid == ItemGuid) return &SoReal[i];
 
         return nullptr;
     }
 
-    static FFortItemEntry* FindItemEntry(AFortPlayerController* PC, UFortItemDefinition* ItemDefinition)
+    static FFortItemEntry* FindItemEntry(AFortPlayerControllerAthena* PC, UFortItemDefinition* ItemDefinition)
     {
         if (!PC || !PC->WorldInventory || !ItemDefinition) return nullptr;
 
@@ -33,48 +33,112 @@ public:
         return nullptr;
     }
 
-    static FFortItemEntry* FindItemEntryByDefinition(AFortPlayerControllerAthena* Player, UFortItemDefinition* ItemDefinition)
+    static UFortWorldItem* FindItemInstance(AFortPlayerController* PC, UFortItemDefinition* Def)
     {
-        if (!Player || !Player->WorldInventory || !ItemDefinition) return nullptr;
-
-        auto& SoReal = Player->WorldInventory->Inventory.ReplicatedEntries;
-        for (int i = 0; i < SoReal.Num(); ++i)
-            if (SoReal[i].ItemDefinition == ItemDefinition) return &SoReal[i];
-
+        auto& ItemInstancesFr = PC->WorldInventory->Inventory.ItemInstances;
+        for (int i = 0; i < ItemInstancesFr.Num(); ++i)
+        {
+            if (ItemInstancesFr[i]->ItemEntry.ItemDefinition == Def)
+            {
+                return ItemInstancesFr[i];
+            }
+        }
         return nullptr;
     }
 
-    static UFortWorldItem* FindItemInstanceByGUID(AFortPlayerControllerAthena* Player, const FGuid& ItemGuid)
+    static UFortWorldItem* FindItemInstanceByGUID(AFortPlayerControllerAthena* PC, const FGuid& ItemGuid)
     {
-        if (!Player || !Player->WorldInventory) return nullptr;
+        if (!PC || !PC->WorldInventory) return nullptr;
 
-        auto& ItemInstancesFr = Player->WorldInventory->Inventory.ItemInstances;
+        auto& ItemInstancesFr = PC->WorldInventory->Inventory.ItemInstances;
         for (int i = 0; i < ItemInstancesFr.Num(); ++i)
             if (ItemInstancesFr[i] && ItemInstancesFr[i]->ItemEntry.ItemGuid == ItemGuid) return ItemInstancesFr[i];
 
         return nullptr;
     }
 
-    static void GiveItem(AFortPlayerControllerAthena* Player, UFortItemDefinition* ItemDefinition, int32 Count = 1, int32 Level = 0)
+    static void ModifiedEntry(AFortPlayerControllerAthena* PC, FFortItemEntry& Entry)
     {
-        if (!Player || !Player->WorldInventory || !ItemDefinition || Count <= 0) return;
+        auto& ItemInstancesFr = PC->WorldInventory->Inventory.ItemInstances;
+        for (size_t i = 0; i < ItemInstancesFr.Num(); ++i)
+        {
+            if (ItemInstancesFr[i]->ItemEntry.ItemGuid == Entry.ItemGuid)
+            {
+                ItemInstancesFr[i]->ItemEntry = Entry;
+                break;
+            }
+        }
+    }
 
-        auto& Inventory = Player->WorldInventory->Inventory;
+    static void Remove(AFortPlayerController* PC, FGuid Guid)
+    {
+        auto& SoReal = PC->WorldInventory->Inventory.ReplicatedEntries;
+        for (size_t i = 0; i < SoReal.Num(); ++i)
+        {
+            if (SoReal[i].ItemGuid == Guid)
+            {
+                SoReal.Remove(i);
+                break;
+            }
+        }
 
-        FFortItemEntry* ExistingEntry = FindItemEntry(Player, ItemDefinition);
+        auto& ItemInstancesFr = PC->WorldInventory->Inventory.ItemInstances;
+        for (size_t i = 0; i < ItemInstancesFr.Num(); ++i)
+        {
+            if (!ItemInstancesFr[i])
+            {
+                continue;
+            }
+            if (ItemInstancesFr[i]->ItemEntry.ItemGuid == Guid)
+            {
+                ItemInstancesFr.Remove(i);
+                break;
+            }
+        }
+
+        Update((AFortPlayerControllerAthena*)PC, nullptr);
+    }
+
+    static void Remove(AFortPlayerController* PC, UFortItemDefinition* Def, int Count = 1)
+    {
+        auto& SoReal = PC->WorldInventory->Inventory.ReplicatedEntries;
+        for (size_t i = 0; i < SoReal.Num(); ++i)
+        {
+            if (SoReal[i].ItemDefinition == Def)
+            {
+                SoReal[i].Count -= Count;
+                if (SoReal[i].Count <= 0)
+                {
+                    Remove(PC, SoReal[i].ItemGuid);
+                    break;
+                }
+                ModifiedEntry((AFortPlayerControllerAthena*)(PC), SoReal[i]);
+                Update((AFortPlayerControllerAthena*)(PC), &SoReal[i]);
+                break;
+            }
+        }
+    }
+
+    static void GiveItem(AFortPlayerControllerAthena* PC, UFortItemDefinition* ItemDefinition, int32 Count = 1, int32 Level = 0)
+    {
+        if (!PC || !PC->WorldInventory || !ItemDefinition || Count <= 0) return;
+
+        auto& Inventory = PC->WorldInventory->Inventory;
+
+        FFortItemEntry* ExistingEntry = FindItemEntry(PC, ItemDefinition);
 
         if (ExistingEntry) {
             ExistingEntry->Count += Count;
             Inventory.MarkItemDirty(*ExistingEntry);
-            Update(Player, ExistingEntry);
+            Update(PC, ExistingEntry);
             return;
         }
 
         if (UFortWorldItem* NewItem = Cast<UFortWorldItem>(ItemDefinition->CreateTemporaryItemInstanceBP(Count, Level))) {
-            NewItem->SetOwningControllerForTemporaryItem(Player);
+            NewItem->SetOwningControllerForTemporaryItem(PC);
             Inventory.ReplicatedEntries.Add(NewItem->ItemEntry);
             Inventory.ItemInstances.Add(NewItem);
-            Update(Player, &NewItem->ItemEntry);
+            Update(PC, &NewItem->ItemEntry);
         }
     }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-static inline bool (*CantBuild)(UWorld*, UObject*, FVector, FRotator, char, void*, char*) = decltype(CantBuild)(Client::BaseAddress() + 0xc725d0);
+static bool bInfiniteMats = false;
 
 class Building
 {
@@ -10,14 +10,12 @@ class Building
         TArray<AActor*> BuildingActorsToDestroy;
         char Result;
 
-        if (!CantBuild(Client::GetWorld(), Class, BuildLoc, BuildRot, bMirrored, &BuildingActorsToDestroy, &Result))
+        if (!Helpers::CantBuild(Client::GetWorld(), Class, BuildLoc, BuildRot, bMirrored, &BuildingActorsToDestroy, &Result))
         {
             for (int i = 0; i < BuildingActorsToDestroy.Num(); i++)
             {
                 BuildingActorsToDestroy[i]->K2_DestroyActor();
             }
-
-            // unreal handles the free lol (i think)
 
             if (auto NewBuilding = Actors<ABuildingSMActor>(Class, BuildLoc, BuildRot))
             {
@@ -25,7 +23,11 @@ class Building
                 NewBuilding->Team = EFortTeam(((AFortPlayerStateAthena*)Controller->PlayerState)->TeamIndex);
                 NewBuilding->OnRep_Team();
                 NewBuilding->InitializeKismetSpawnedBuildingActor(NewBuilding, Controller);
-                // Inventory::Remove(PC, Client::GetFortKismet()->K2_GetResourceItemDefinition(NewBuilding->ResourceType), 10); // soon
+
+                if (bInfiniteMats == false)
+                {
+                    Inventory::Remove(Controller, Client::GetFortKismet()->K2_GetResourceItemDefinition(NewBuilding->ResourceType), 10);
+                }
             }
         }
     }
@@ -68,7 +70,7 @@ class Building
         Inventory::GiveItem(PlayerController, ResourceItemDefinition, ResourceCount);
         Inventory::Update(PlayerController);
 
-        OnDamageServerOG(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+        return OnDamageServerOG(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
     }
 
 public:
