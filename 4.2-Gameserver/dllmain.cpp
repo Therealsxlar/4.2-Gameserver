@@ -3,6 +3,7 @@
 #include "Definitions.h"
 #include "Properties.h"
 #include "Utils.h"
+#include "UE.h"
 
 #include "Looting.h"
 #include "Abilities.h"
