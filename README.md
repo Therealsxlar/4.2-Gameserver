@@ -15,13 +15,19 @@
 - [X] Abilities
 - [X] MCP
 - [X] F7 or (FN + 7) = Start Aircraft
-- [X] Proper Hooking
 - [X] Farming/Building (I need to add editing now)
+- [X] Looting (kinda) still working on it,
+- [X] Handle dropping and picking up items
 
 ## Future Updates
-- [ ] Emoting
-- [ ] Looting
-- [ ] Handle dropping and picking up items
+- [ ] Vending machines
+- [ ] Floor loot
+- [ ] Editing
+- [ ] CURL for requests
+- [ ] Lategame
+- [ ] Reloading | NetMulticast_Athena_BatchedDamageCues
+- [ ] Emoting & Sprays and Squad comms
+- [ ] Teams
 
 ## Credits
 - **Dumper 7** (Used to dump the SDK with) [Dumper 7's Github](https://github.com/Encryqed/Dumper-7)
