@@ -67,14 +67,14 @@ class Building
             return OnDamageServerOG(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 
         PlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, BuildingSMActor->ResourceType, ResourceCount, false, Damage == 100.0f);
-        Inventory::GiveItem(PlayerController, ResourceItemDefinition, ResourceCount);
+        Inventory::AddItem(PlayerController, ResourceItemDefinition, ResourceCount);
         Inventory::Update(PlayerController);
 
         return OnDamageServerOG(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
     }
 
 public:
-    static void InitializeHooks()
+    static void Hook()
     {
         auto FortPCAthena = AFortPlayerControllerAthena::StaticClass()->DefaultObject;
 

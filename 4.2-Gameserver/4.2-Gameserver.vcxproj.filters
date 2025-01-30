@@ -71,6 +71,9 @@
     <ClInclude Include="UE.h">
       <Filter>Fortnite\Game\Filter</Filter>
     </ClInclude>
+    <ClInclude Include="Quests.h">
+      <Filter>Fortnite\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

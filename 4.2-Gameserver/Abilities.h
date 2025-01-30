@@ -77,7 +77,7 @@ private:
     }
 
 public:
-    static void InitializeHooks()
+    static void Hook()
     {
         auto FortASCA = UFortAbilitySystemComponentAthena::StaticClass()->DefaultObject;
 

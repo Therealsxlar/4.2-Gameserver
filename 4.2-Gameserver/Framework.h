@@ -105,19 +105,27 @@ namespace DispatchRequest
 	}
 }
 
-namespace Memory
+void NullFunction(uintptr_t Func)
 {
-	void NullFunction(uintptr_t Func)
-	{
-		DWORD dwProt;
-		VirtualProtect((PVOID)Func, 1, PAGE_EXECUTE_READWRITE, &dwProt);
+	DWORD dwProt;
+	VirtualProtect((PVOID)Func, 1, PAGE_EXECUTE_READWRITE, &dwProt);
 
-		*(uint8_t*)Func = 0xC3;
+	*(uint8_t*)Func = 0xC3;
 
-		DWORD dwTemp;
-		VirtualProtect((PVOID)Func, 1, dwProt, &dwProt);
-	}
+	DWORD dwTemp;
+	VirtualProtect((PVOID)Func, 1, dwProt, &dwProt);
 }
+
+class NullFuncs
+{
+public:
+	static void Hook()
+	{
+		NullFunction(Client::BaseAddress() + 0xc4bd00); // ChangeGameSessionId
+		NullFunction(Client::BaseAddress() + 0xa8de20);
+		NullFunction(Client::BaseAddress() + 0xf465b0);
+	}
+};
 
 template <typename T>
 static inline T* Cast(UObject* Object)

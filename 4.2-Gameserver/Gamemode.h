@@ -3,6 +3,7 @@
 static bool bInitialize = false;
 static bool bSetupPlaylist = false;
 static bool bTestingMode = false;
+static bool bEnableFloorLoot = false;
 
 class Gamemode
 {
@@ -61,6 +62,15 @@ class Gamemode
                     Client::GetWorld()->LevelCollections[i].NetDriver = NetDriver;
                 }
 
+                if (bEnableFloorLoot)
+                {
+                    // SpawnFloorLoot();
+                }
+                else
+                {
+                    LOG("Floorloot isn't enabled");
+                }
+
                 SetConsoleTitleA("4.2 Gameserver | Listening");
             }
 
@@ -101,12 +111,12 @@ class Gamemode
         for (int i = 0; i < Client::GetGameMode()->StartingItems.Num(); i++)
         {
             auto& Item = Client::GetGameMode()->StartingItems[i].Item;
-            if (Item) Inventory::GiveItem(FortPC, Item, Client::GetGameMode()->StartingItems[i].Count);
+            if (Item) Inventory::AddItem(FortPC, Item, Client::GetGameMode()->StartingItems[i].Count);
         }
 
         static auto Pickaxe = StaticFindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
         auto CosmeticLoadoutPickaxe = FortPC->CustomizationLoadout;
-        Inventory::GiveItem(FortPC, CosmeticLoadoutPickaxe.Pickaxe ? CosmeticLoadoutPickaxe.Pickaxe->WeaponDefinition : Pickaxe->WeaponDefinition, 1);
+        Inventory::AddItem(FortPC, CosmeticLoadoutPickaxe.Pickaxe ? CosmeticLoadoutPickaxe.Pickaxe->WeaponDefinition : Pickaxe->WeaponDefinition, 1);
         Inventory::Update((AFortPlayerControllerAthena*)NewPlayer);
 
         return NewPawn;
@@ -128,8 +138,8 @@ class Gamemode
                     static auto BluePump = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
                     static auto ShotgunAmmo = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataShells.AthenaAmmoDataShells");
 
-                    Inventory::GiveItem(FortPC, BluePump, 1, 5);
-                    Inventory::GiveItem(FortPC, ShotgunAmmo, 1000);
+                    Inventory::AddItem(FortPC, BluePump, 1, 5);
+                    Inventory::AddItem(FortPC, ShotgunAmmo, 1000);
                 }
             }
         }
@@ -138,7 +148,7 @@ class Gamemode
     }
 
 public:
-    static void InitializeHooks()
+    static void Hook()
     {
         auto FortGMAthena = AFortGameModeAthena::StaticClass()->DefaultObject;
         auto FortPCAthena = AFortPlayerControllerAthena::StaticClass()->DefaultObject;

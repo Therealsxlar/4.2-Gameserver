@@ -57,6 +57,17 @@ public:
         return nullptr;
     }
 
+    static FFortItemEntry* FindItemEntryByGUID(AFortPlayerControllerAthena* PC, const FGuid& ItemGuid)
+    {
+        if (!PC || !PC->WorldInventory) return nullptr;
+
+        auto SoReal = PC->WorldInventory->Inventory.ReplicatedEntries;
+        for (int i = 0; i < SoReal.Num(); ++i)
+            if (SoReal[i].ItemGuid == ItemGuid) return &SoReal[i];
+
+        return nullptr;
+    }
+
     static void ModifiedEntry(AFortPlayerControllerAthena* PC, FFortItemEntry& Entry)
     {
         auto& ItemInstancesFr = PC->WorldInventory->Inventory.ItemInstances;
@@ -119,7 +130,7 @@ public:
         }
     }
 
-    static void GiveItem(AFortPlayerControllerAthena* PC, UFortItemDefinition* ItemDefinition, int32 Count = 1, int32 Level = 0)
+    static void AddItem(AFortPlayerControllerAthena* PC, UFortItemDefinition* ItemDefinition, int32 Count = 1, int32 Level = 0)
     {
         if (!PC || !PC->WorldInventory || !ItemDefinition || Count <= 0) return;
 
@@ -142,8 +153,99 @@ public:
         }
     }
 
+    static bool IsInventoryFull(AFortPlayerControllerAthena* Controller)
+    {
+        int ConsumableCount = 0;
+        int WeaponCount = 0;
+        auto InstancesPtr = &Controller->WorldInventory->Inventory.ItemInstances;
+
+        for (int i = 0; i < InstancesPtr->Num(); i++)
+        {
+            if (InstancesPtr->operator[](i))
+            {
+                EFortItemType ItemType = InstancesPtr->operator[](i)->ItemEntry.ItemDefinition->GetItemType();
+
+                if (ItemType == EFortItemType::Consumable)
+                {
+                    ConsumableCount++;
+                }
+                else if (ItemType == EFortItemType::WeaponRanged)
+                {
+                    WeaponCount++;
+                }
+            }
+        }
+
+        int TotalItems = ConsumableCount + WeaponCount;
+
+        return TotalItems >= 5;
+    }
+
+    static EFortQuickBars GetQuickBars(UFortItemDefinition* ItemDefinition)
+    {
+        if (!ItemDefinition->IsA(UFortWeaponMeleeItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortEditToolItemDefinition::StaticClass()) &&
+            !ItemDefinition->IsA(UFortBuildingItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortAmmoItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortResourceItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortTrapItemDefinition::StaticClass()))
+            return EFortQuickBars::Primary;
+
+        return EFortQuickBars::Secondary;
+    }
+
+    // i'll rewrite GiveItem soon / add pickup notifications,
+    // currently trying to push to github because it's been awhile it works well for now sorry!
+
+    static UFortWorldItem* GiveItem(AFortPlayerControllerAthena* Controller, UFortItemDefinition* Definition, int Count = 1, int LoadedAmmo = 0, int Level = 0)
+    {
+        if (!Controller || !Controller->WorldInventory || !Definition || Count <= 0)
+            return nullptr;
+
+        bool bIsStackable = Definition->MaxStackSize > 1;
+        FFortItemEntry* ExistingEntry = FindItemEntry(Controller, Definition);
+
+        if (ExistingEntry && bIsStackable)
+        {
+            int CurrentCount = ExistingEntry->Count;
+            int NewCount = CurrentCount + Count;
+
+            if (NewCount > Definition->MaxStackSize)
+            {
+                int OverflowCount = NewCount - Definition->MaxStackSize;
+
+                ExistingEntry->Count = Definition->MaxStackSize;
+                Controller->WorldInventory->Inventory.MarkItemDirty(*ExistingEntry);
+                Update(Controller, ExistingEntry);
+
+                SpawnPickups::SpawnPickup(Controller->MyFortPawn->K2_GetActorLocation(), ExistingEntry, EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset, Controller->MyFortPawn, OverflowCount);
+            }
+            else
+            {
+                ExistingEntry->Count = NewCount;
+                Controller->WorldInventory->Inventory.MarkItemDirty(*ExistingEntry);
+                Update(Controller, ExistingEntry);
+            }
+            return nullptr;
+        }
+
+        UFortWorldItem* NewItem = Cast<UFortWorldItem>(Definition->CreateTemporaryItemInstanceBP(Count, Level));
+
+        if (!NewItem)
+        {
+            return nullptr;
+        }
+
+        NewItem->SetOwningControllerForTemporaryItem(Controller);
+        NewItem->ItemEntry.Count = Count;
+        NewItem->ItemEntry.LoadedAmmo = LoadedAmmo;
+
+        Controller->WorldInventory->Inventory.ReplicatedEntries.Add(NewItem->ItemEntry);
+        Controller->WorldInventory->Inventory.ItemInstances.Add(NewItem);
+
+        Update(Controller, &NewItem->ItemEntry);
+
+        return NewItem;
+    }
+
 public:
-    static void InitializeHooks()
+    static void Hook()
     {
 
     }

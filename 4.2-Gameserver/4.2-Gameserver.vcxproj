@@ -144,6 +144,7 @@
     <ClInclude Include="Building.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Looting.h" />
+    <ClInclude Include="Quests.h" />
     <ClInclude Include="UE.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Framework.h" />

@@ -18,6 +18,16 @@ static void VirtualHook(void** vft, int idx, void* newfunc, void** OG = nullptr)
 	VirtualProtect(&vft[idx], 8, dwProt, &dwTemp);
 }
 
+static void ExecHook(UFunction* Function, void* Hook, void** OG = nullptr)
+{
+	auto& Exec = Function->GetFunc();
+
+	if (OG)
+		*OG = Exec;
+
+	Exec = Hook;
+}
+
 #include "SDK/SDK.hpp"
 using namespace SDK;
 

@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "UE.h"
 
+#include "Quests.h"
 #include "Looting.h"
 #include "Abilities.h"
 #include "Inventory.h"
@@ -14,21 +15,22 @@
 
 void InitializeGS()
 {
+    // i'll make a tutorial on how to get the offsets on my youtube soon
+    // i created an offset finder i'll open-source it soon so you wont need to use IDA for these
+    // YouTube: Sxlar999
+
     CREATEHOOK(Client::BaseAddress() + 0x249ea20, GetNetModeWorld, nullptr);
     CREATEHOOK(Client::BaseAddress() + 0x20cee10, Definitions::KickPlayer, &Definitions::KickPlayerOG);
     CREATEHOOK(Client::BaseAddress() + 0x806900, DispatchRequest::DispatchRequest, &DispatchRequest::DispatchRequestOG);
     CREATEHOOK(Client::BaseAddress() + 0x2449f70, GetMaxTickrate, nullptr);
     CREATEHOOK(Client::BaseAddress() + 0x21f8a90, TickFlush, &TickFlushOG);
 
-    Memory::NullFunction(Client::BaseAddress() + 0xc4bd00); // ChangeGameSessionId
-    Memory::NullFunction(Client::BaseAddress() + 0xa8de20);
-    Memory::NullFunction(Client::BaseAddress() + 0xf465b0);
-
-    Abilities::InitializeHooks();
-    Gamemode::InitializeHooks();
-    Player::InitializeHooks();
-    Inventory::InitializeHooks();
-    Building::InitializeHooks();
+    Abilities::Hook();
+    Gamemode::Hook();
+    Player::Hook();
+    NullFuncs::Hook();
+    Inventory::Hook();
+    Building::Hook();
 
     MH_EnableHook(MH_ALL_HOOKS);
 }

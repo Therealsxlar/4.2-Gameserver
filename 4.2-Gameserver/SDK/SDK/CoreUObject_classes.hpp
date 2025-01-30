@@ -238,8 +238,13 @@ public:
 class UFunction : public UStruct
 {
 public:
+	using FNativeFuncPtr = void (*)(void* Context, void* TheStack, void* Result);                    // 0x0000(0x0000)(NOT AUTO-GENERATED PROPERTY)
 	uint32                                       FunctionFlags;                                     // (0x88[0x08]) NOT AUTO-GENERATED PROPERTY
 	uint8                                        Pad_21[0x28];                                      // Fixing Size Of Struct [ Dumper-7 ]
+	FNativeFuncPtr                               ExecFunction;                                      // 0x00D8(0x0008)(NOT AUTO-GENERATED PROPERTY)
+
+public:
+	void*& GetFunc() { return *(void**)(__int64(this) + 0xB0); }
 
 	static class UClass* StaticClass()
 	{
