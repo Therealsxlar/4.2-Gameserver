@@ -23,6 +23,7 @@
 - [ ] Vending machines
 - [ ] Floor loot
 - [ ] Editing
+- [ ] ServerSpawnDeco - (Traps)
 - [ ] CURL for requests
 - [ ] Lategame
 - [ ] Reloading | NetMulticast_Athena_BatchedDamageCues
